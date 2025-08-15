@@ -1,0 +1,6 @@
+{
+  "/api/companies": "/companies",
+  "/api/companies/:id": "/companies/:id",
+  "/api/companies/:id/responses": "/responses?company_id=:id",
+  "/api/responses/:id": "/responses/:id"
+}
