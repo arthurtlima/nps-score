@@ -1,10 +1,12 @@
 'use client';
+import { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { Typography, Box, Button, Card, CardContent, TextField, MenuItem, Stack } from '@mui/material';
-import Stars from '../components/Stars';
+import Notification from '@/components/Notification';
+import Stars from '@/components/Stars';
 import api from '../lib/api';
 
 const schema = z.object({
@@ -16,9 +18,15 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 export default function DashboardPage() {
+  const [notification, setNotification] = useState({ open: false, message: '', type: 'success' as const });
+  
   const { control, register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm<FormData>({
     resolver: zodResolver(schema),
-    defaultValues: { rating: 3, comment: '' }
+    defaultValues: { 
+      companyId: '',
+      rating: 3, 
+      comment: '' 
+    }
   });
 
   const { data: companies } = useQuery({
@@ -28,7 +36,6 @@ export default function DashboardPage() {
 
   const { mutate: submitResponse } = useMutation({
     mutationFn: async (data: FormData) => {
-      console.log("data ", data)
       const response = await api.post(`/companies/${data.companyId}/responses`, {
         rating: data.rating,
         comment: data.comment
@@ -37,6 +44,7 @@ export default function DashboardPage() {
     },
     onSuccess: () => {
       reset();
+      setNotification({ open: true, message: 'Avaliação enviada com sucesso!', type: 'success' });
     }
   });
 
@@ -52,20 +60,27 @@ export default function DashboardPage() {
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)}>
             <Stack spacing={3}>
-              <TextField
-                select
-                fullWidth
-                label="Selecione a empresa"
-                {...register('companyId')}
-                error={!!errors.companyId}
-                helperText={errors.companyId?.message}
-              >
-                {companies?.map((company: any) => (
-                  <MenuItem key={company.id} value={company.id}>
-                    {company.name}
-                  </MenuItem>
-                ))}
-              </TextField>
+              <Controller
+                name="companyId"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    select
+                    fullWidth
+                    label="Selecione a empresa"
+                    value={field.value}
+                    onChange={field.onChange}
+                    error={!!errors.companyId}
+                    helperText={errors.companyId?.message}
+                  >
+                    {(companies || []).map((company: any) => (
+                      <MenuItem key={company.id} value={company.id}>
+                        {company.name}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                )}
+              />
 
               <Box>
                 <Typography variant="body1" gutterBottom>Como você avalia esta empresa?</Typography>
@@ -95,9 +110,12 @@ export default function DashboardPage() {
         </CardContent>
       </Card>
 
-      <Box display="flex" gap={1}>
-        <Button href="/companies" variant="outlined">Gerenciar empresas</Button>
-      </Box>
+      <Notification 
+        open={notification.open}
+        message={notification.message}
+        type={notification.type}
+        onClose={() => setNotification(prev => ({ ...prev, open: false }))}
+      />
     </Box>
   );
 }

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { ReactQueryProvider } from '@/providers/ReactQueryProvider';
 import { CssBaseline, ThemeProvider, Container } from '@mui/material';
+import Navbar from '@/components/Navbar';
 import theme from '@/theme/theme';
 
 export const metadata = {
@@ -15,7 +16,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <ReactQueryProvider>
-            <Container maxWidth="lg" sx={{ py: 4 }}>{children}</Container>
+            <Navbar />
+            <Container maxWidth="lg" sx={{ py: 4, px: 0 }}>{children}</Container>
           </ReactQueryProvider>
         </ThemeProvider>
       </body>
