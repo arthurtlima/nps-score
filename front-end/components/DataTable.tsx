@@ -1,6 +1,15 @@
 'use client';
 import * as React from 'react';
-import { Table, TableBody, TableCell, TableHead, TableRow, CircularProgress, Box, Typography } from '@mui/material';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  CircularProgress,
+  Box,
+  Typography,
+} from '@mui/material';
 
 type Column<T> = { key: keyof T; header: string; render?: (value: any, row: T) => React.ReactNode };
 
@@ -19,11 +28,14 @@ export default function DataTable<T extends Record<string, any>>({
   loading,
   error,
   emptyMessage = 'Sem dados',
-  getRowId
+  getRowId,
 }: DataTableProps<T>) {
-  if (loading) return (
-    <Box display="flex" alignItems="center" gap={1}><CircularProgress size={20} /> <Typography>Carregando...</Typography></Box>
-  );
+  if (loading)
+    return (
+      <Box display="flex" alignItems="center" gap={1}>
+        <CircularProgress size={20} /> <Typography>Carregando...</Typography>
+      </Box>
+    );
   if (error) return <Typography color="error">Erro ao carregar dados.</Typography>;
   if (!rows?.length) return <Typography>{emptyMessage}</Typography>;
 
@@ -31,7 +43,7 @@ export default function DataTable<T extends Record<string, any>>({
     <Table size="small">
       <TableHead>
         <TableRow>
-          {columns.map((c) => (
+          {columns.map(c => (
             <TableCell key={String(c.key)}>{c.header}</TableCell>
           ))}
         </TableRow>
@@ -39,7 +51,7 @@ export default function DataTable<T extends Record<string, any>>({
       <TableBody>
         {rows.map((r, idx) => (
           <TableRow key={getRowId ? getRowId(r) : idx}>
-            {columns.map((c) => (
+            {columns.map(c => (
               <TableCell key={String(c.key)}>
                 {c.render ? c.render(r[c.key], r) : String(r[c.key] ?? '')}
               </TableCell>

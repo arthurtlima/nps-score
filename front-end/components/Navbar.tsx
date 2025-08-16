@@ -1,10 +1,10 @@
 'use client';
 import { useState } from 'react';
-import { 
-  AppBar, 
-  Toolbar, 
-  Button, 
-  IconButton, 
+import {
+  AppBar,
+  Toolbar,
+  Button,
+  IconButton,
   Box,
   useMediaQuery,
   useTheme,
@@ -13,7 +13,7 @@ import {
   List,
   ListItem,
   ListItemButton,
-  ListItemText
+  ListItemText,
 } from '@mui/material';
 import { Menu as MenuIcon, AccountCircle } from '@mui/icons-material';
 import { useRouter, usePathname } from 'next/navigation';
@@ -29,7 +29,7 @@ export default function Navbar() {
 
   const menuItems = [
     { label: 'Avaliação NPS', path: '/' },
-    { label: 'Empresas', path: '/companies' }
+    { label: 'Empresas', path: '/companies' },
   ];
 
   const navigate = (path: string) => {
@@ -52,29 +52,25 @@ export default function Navbar() {
                 >
                   <MenuIcon />
                 </IconButton>
-                <Drawer
-                  anchor="left"
-                  open={drawerOpen}
-                  onClose={() => setDrawerOpen(false)}
-                >
+                <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
                   <Box sx={{ width: 250 }}>
                     <List>
-                      {menuItems.map((item) => (
+                      {menuItems.map(item => (
                         <ListItem key={item.path} disablePadding>
                           <ListItemButton
                             onClick={() => navigate(item.path)}
                             sx={{
                               '&:hover': {
                                 backgroundColor: 'secondary.main',
-                                color: 'white'
+                                color: 'white',
                               },
                               ...(pathname === item.path && {
                                 backgroundColor: 'secondary.main',
                                 color: 'white',
-                              })
+                              }),
                             }}
                           >
-                            <ListItemText 
+                            <ListItemText
                               primary={item.label}
                               sx={{ textTransform: 'uppercase', '& span': { fontWeight: '700' } }}
                             />
@@ -87,7 +83,7 @@ export default function Navbar() {
               </>
             ) : (
               <Box sx={{ display: 'flex', gap: 2 }}>
-                {menuItems.map((item) => (
+                {menuItems.map(item => (
                   <Button
                     key={item.path}
                     color="inherit"
@@ -95,11 +91,11 @@ export default function Navbar() {
                     sx={{
                       fontWeight: '700',
                       '&:hover': {
-                        color: 'secondary.main'
+                        color: 'secondary.main',
                       },
                       ...(pathname === item.path && {
-                        color: 'secondary.main'
-                      })
+                        color: 'secondary.main',
+                      }),
                     }}
                   >
                     {item.label}
@@ -108,9 +104,9 @@ export default function Navbar() {
               </Box>
             )}
 
-            <IconButton 
-              size="large" 
-              color="inherit" 
+            <IconButton
+              size="large"
+              color="inherit"
               onClick={() => setLoginOpen(true)}
               sx={{ marginLeft: 'auto' }}
             >

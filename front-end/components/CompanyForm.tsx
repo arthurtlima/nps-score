@@ -13,7 +13,12 @@ interface CompanyFormProps {
 }
 
 export default function CompanyForm({ onCreated }: CompanyFormProps) {
-  const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm<FormData>({ resolver: zodResolver(schema) });
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm<FormData>({ resolver: zodResolver(schema) });
 
   const onSubmit = async (data: FormData) => {
     await api.post('/companies', data);
@@ -24,8 +29,16 @@ export default function CompanyForm({ onCreated }: CompanyFormProps) {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-        <TextField size="small" label="Nome da empresa" {...register('name')} error={!!errors.name} helperText={errors.name?.message} />
-        <Button type="submit" variant="contained" disabled={isSubmitting}>Criar</Button>
+        <TextField
+          size="small"
+          label="Nome da empresa"
+          {...register('name')}
+          error={!!errors.name}
+          helperText={errors.name?.message}
+        />
+        <Button type="submit" variant="contained" disabled={isSubmitting}>
+          Criar
+        </Button>
       </Stack>
     </form>
   );

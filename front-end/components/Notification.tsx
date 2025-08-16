@@ -9,11 +9,17 @@ interface NotificationProps {
   duration?: number;
 }
 
-export default function Notification({ open, message, type, onClose, duration = 4000 }: NotificationProps) {
+export default function Notification({
+  open,
+  message,
+  type,
+  onClose,
+  duration = 4000,
+}: NotificationProps) {
   return (
-    <Snackbar 
-      open={open} 
-      autoHideDuration={duration} 
+    <Snackbar
+      open={open}
+      autoHideDuration={duration}
       onClose={onClose}
       anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
     >
