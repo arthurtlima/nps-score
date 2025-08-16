@@ -8,8 +8,11 @@ import api from '@/lib/api';
 const schema = z.object({ name: z.string().min(2, 'Mínimo 2 caracteres') });
 
 type FormData = z.infer<typeof schema>;
+interface CompanyFormProps {
+  onCreated?: () => void;
+}
 
-export default function CompanyForm({ onCreated }: { onCreated?: () => void }) {
+export default function CompanyForm({ onCreated }: CompanyFormProps) {
   const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm<FormData>({ resolver: zodResolver(schema) });
 
   const onSubmit = async (data: FormData) => {

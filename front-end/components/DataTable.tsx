@@ -4,6 +4,15 @@ import { Table, TableBody, TableCell, TableHead, TableRow, CircularProgress, Box
 
 type Column<T> = { key: keyof T; header: string; render?: (value: any, row: T) => React.ReactNode };
 
+interface DataTableProps<T> {
+  columns: Column<T>[];
+  rows: T[];
+  loading?: boolean;
+  error?: boolean;
+  emptyMessage?: string;
+  getRowId?: (row: T) => string;
+}
+
 export default function DataTable<T extends Record<string, any>>({
   columns,
   rows,
@@ -11,14 +20,7 @@ export default function DataTable<T extends Record<string, any>>({
   error,
   emptyMessage = 'Sem dados',
   getRowId
-}: {
-  columns: Column<T>[];
-  rows: T[];
-  loading?: boolean;
-  error?: boolean;
-  emptyMessage?: string;
-  getRowId?: (row: T) => string;
-}) {
+}: DataTableProps<T>) {
   if (loading) return (
     <Box display="flex" alignItems="center" gap={1}><CircularProgress size={20} /> <Typography>Carregando...</Typography></Box>
   );

@@ -12,8 +12,12 @@ const schema = z.object({
 });
 
 type FormData = z.infer<typeof schema>;
+interface ResponseFormProps {
+  companyId: string;
+  onCreated?: () => void;
+}
 
-export default function ResponseForm({ companyId, onCreated }: { companyId: string; onCreated?: () => void }) {
+export default function ResponseForm({ companyId, onCreated }: ResponseFormProps) {
   const { control, register, handleSubmit, formState: { isSubmitting } } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: { rating: 3, comment: '' }

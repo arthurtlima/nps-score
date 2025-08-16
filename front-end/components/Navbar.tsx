@@ -5,95 +5,122 @@ import {
   Toolbar, 
   Button, 
   IconButton, 
-  Menu, 
-  MenuItem, 
   Box,
   useMediaQuery,
   useTheme,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  TextField,
-  Stack,
-  Container
+  Container,
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText
 } from '@mui/material';
 import { Menu as MenuIcon, AccountCircle } from '@mui/icons-material';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
+import LoginForm from './LoginForm';
 
 export default function Navbar() {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
-  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
+  const menuItems = [
+    { label: 'Avaliação NPS', path: '/' },
+    { label: 'Empresas', path: '/companies' }
+  ];
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const navigate = (path: any) => {
-    router.push(path);
-    handleClose();
-  };
-
-  const handleLogin = (event: React.FormEvent) => {
-    event.preventDefault();
-    // Lógica de login aqui
-    setLoginOpen(false);
+  const navigate = (path: string) => {
+    router.push(path as any);
+    setDrawerOpen(false);
   };
 
   return (
     <>
       <AppBar position="static">
         <Container maxWidth="lg">
-            <Toolbar disableGutters>
-                {isMobile ? (
-                    <>
-                    <IconButton size="large" edge="start" color="inherit" onClick={handleMenu}>
-                        <MenuIcon />
-                    </IconButton>
-                    <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
-                        <MenuItem onClick={() => navigate('/')}>Avaliação NPS</MenuItem>
-                        <MenuItem onClick={() => navigate('/companies')}>Empresas</MenuItem>
-                    </Menu>
-                    </>
-                ) : (
-                    <Box sx={{ display: 'flex', gap: 2 }}>
-                    <Button color="inherit" onClick={() => navigate('/')}>Avaliação NPS</Button>
-                    <Button color="inherit" onClick={() => navigate('/companies')}>Empresas</Button>
-                    </Box>
-                )}
-
-                <IconButton 
-                    size="large" 
-                    color="inherit" 
-                    onClick={() => setLoginOpen(true)}
-                    sx={{ marginLeft: 'auto' }}
+          <Toolbar disableGutters>
+            {isMobile ? (
+              <>
+                <IconButton
+                  size="large"
+                  edge="start"
+                  color="inherit"
+                  onClick={() => setDrawerOpen(true)}
                 >
-                    <AccountCircle />
+                  <MenuIcon />
                 </IconButton>
-            </Toolbar>
+                <Drawer
+                  anchor="left"
+                  open={drawerOpen}
+                  onClose={() => setDrawerOpen(false)}
+                >
+                  <Box sx={{ width: 250 }}>
+                    <List>
+                      {menuItems.map((item) => (
+                        <ListItem key={item.path} disablePadding>
+                          <ListItemButton
+                            onClick={() => navigate(item.path)}
+                            sx={{
+                              '&:hover': {
+                                backgroundColor: 'secondary.main',
+                                color: 'white'
+                              },
+                              ...(pathname === item.path && {
+                                backgroundColor: 'secondary.main',
+                                color: 'white',
+                              })
+                            }}
+                          >
+                            <ListItemText 
+                              primary={item.label}
+                              sx={{ textTransform: 'uppercase', '& span': { fontWeight: '700' } }}
+                            />
+                          </ListItemButton>
+                        </ListItem>
+                      ))}
+                    </List>
+                  </Box>
+                </Drawer>
+              </>
+            ) : (
+              <Box sx={{ display: 'flex', gap: 2 }}>
+                {menuItems.map((item) => (
+                  <Button
+                    key={item.path}
+                    color="inherit"
+                    onClick={() => navigate(item.path)}
+                    sx={{
+                      fontWeight: '700',
+                      '&:hover': {
+                        color: 'secondary.main'
+                      },
+                      ...(pathname === item.path && {
+                        color: 'secondary.main'
+                      })
+                    }}
+                  >
+                    {item.label}
+                  </Button>
+                ))}
+              </Box>
+            )}
+
+            <IconButton 
+              size="large" 
+              color="inherit" 
+              onClick={() => setLoginOpen(true)}
+              sx={{ marginLeft: 'auto' }}
+            >
+              <AccountCircle />
+            </IconButton>
+          </Toolbar>
         </Container>
       </AppBar>
 
-      <Dialog open={loginOpen} onClose={() => setLoginOpen(false)} maxWidth="xs" fullWidth>
-        <DialogTitle>Login</DialogTitle>
-        <DialogContent>
-          <form onSubmit={handleLogin}>
-            <Stack spacing={2} sx={{ mt: 1 }}>
-              <TextField fullWidth label="Email" type="email" required />
-              <TextField fullWidth label="Senha" type="password" required />
-              <Button type="submit" variant="contained" fullWidth>
-                Entrar
-              </Button>
-            </Stack>
-          </form>
-        </DialogContent>
-      </Dialog>
+      <LoginForm open={loginOpen} onClose={() => setLoginOpen(false)} />
     </>
   );
 }
