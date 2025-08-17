@@ -73,7 +73,14 @@ export default function DashboardPage() {
 
   return (
     <Box display="grid" gap={3}>
-      <Typography variant="h4" fontWeight={700}>
+      <Typography
+        variant="h2"
+        fontWeight={700}
+        sx={{
+          fontSize: { xs: '1.75rem', sm: '3rem' },
+          px: { xs: 2, sm: 0 },
+        }}
+      >
         Formulário de Avaliação NPS
       </Typography>
 
@@ -103,16 +110,14 @@ export default function DashboardPage() {
                 )}
               />
 
-              <Box>
-                <Typography variant="body1" gutterBottom>
-                  Como você avalia esta empresa?
-                </Typography>
-                <Controller
-                  name="rating"
-                  control={control}
-                  render={({ field }) => <Stars value={field.value} onChange={field.onChange} />}
-                />
-              </Box>
+              <Typography variant="body1" gutterBottom>
+                Como você avalia esta empresa?
+              </Typography>
+              <Controller
+                name="rating"
+                control={control}
+                render={({ field }) => <Stars value={field.value} onChange={field.onChange} />}
+              />
 
               <TextField
                 fullWidth
@@ -123,15 +128,24 @@ export default function DashboardPage() {
                 placeholder="Conte-nos mais sobre sua experiência..."
               />
 
-              <Button
-                type="submit"
-                variant="contained"
-                size="large"
-                sx={{ textDecoration: 'none', backgroundColor: 'secondary.main' }}
-                disabled={isSubmitting}
-              >
-                Enviar Avaliação
-              </Button>
+              <Box display="flex" justifyContent="center">
+                <Button
+                  type="submit"
+                  variant="contained"
+                  sx={{
+                    backgroundColor: 'secondary.main',
+                    minWidth: '200px',
+                    maxWidth: '300px',
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      backgroundColor: 'secondary.dark',
+                    },
+                  }}
+                  disabled={isSubmitting}
+                >
+                  Enviar Avaliação
+                </Button>
+              </Box>
             </Stack>
           </form>
         </CardContent>
