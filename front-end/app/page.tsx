@@ -83,9 +83,20 @@ export default function DashboardPage() {
       >
         Formulário de Avaliação NPS
       </Typography>
+      <Typography variant="body1" color="text.secondary" sx={{ mt: 1, px: { xs: 2, sm: 0 } }}>
+        Sua opinião é muito importante! Avalie sua experiência com as empresas e ajude-nos a
+        melhorar nossos serviços. Sua avaliação é anônima e contribui para o desenvolvimento de
+        melhores produtos e atendimento.
+      </Typography>
 
       <Card>
         <CardContent>
+          <Typography variant="h6" gutterBottom>
+            Nova Avaliação NPS
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+            Preencha os campos abaixo para enviar sua avaliação
+          </Typography>
           <form onSubmit={handleSubmit(onSubmit)}>
             <Stack spacing={3}>
               <Controller

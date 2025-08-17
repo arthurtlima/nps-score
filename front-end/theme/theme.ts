@@ -66,6 +66,34 @@ const theme = createTheme({
   shape: {
     borderRadius: 12,
   },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          textTransform: 'none',
+        },
+        containedSecondary: {
+          color: 'white',
+        },
+      },
+    },
+    MuiTypography: {
+      styleOverrides: {
+        h1: {
+          px: { xs: 2, sm: 0 },
+        },
+        h2: {
+          px: { xs: 2, sm: 0 },
+        },
+        h3: {
+          px: { xs: 2, sm: 0 },
+        },
+        h4: {
+          px: { xs: 2, sm: 0 },
+        },
+      },
+    },
+  },
 });
 
 export default theme;

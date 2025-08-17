@@ -1,118 +1,254 @@
 'use client';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Card, CardContent, Typography, Box, Button } from '@mui/material';
+import { Card, CardContent, Typography, Box, Button, TextField, AlertColor } from '@mui/material';
+import { Edit, Save, Cancel, Delete, Visibility } from '@mui/icons-material';
 import DataTable from '@/components/DataTable';
 import CompanyForm from '@/components/CompanyForm';
 import NpsBadge from '@/components/NpsBadge';
-import api from '@/lib/api';
+import Notification from '@/components/Notification';
+import { useCompanies } from '@/hooks/companies/useCompanies';
+import { useDeleteCompany } from '@/hooks/companies/useDeleteCompany';
+import { useUpdateCompany } from '@/hooks/companies/useUpdateCompany';
+import { useNpsReports } from '@/hooks/nps/useNpsReports';
+import { Company } from '@/types/company';
+import { NpsRow } from '@/types/nps';
 
-export type NpsRow = {
-  id: string;
-  name: string;
-  nps: number | null;
-  promoters: number;
-  neutrals: number;
-  detractors: number;
-  total: number;
+type Column<T> = {
+  key: keyof T;
+  header: string;
+  width?: string;
+  render?: (value: any, row: T) => React.ReactNode;
 };
-
-export type Company = { id: string; name: string; created_at?: string };
 
 export default function CompaniesPage() {
   const router = useRouter();
-  const qc = useQueryClient();
-  const { data: companiesData, isLoading: companiesIsLoading } = useQuery<Company[]>({
-    queryKey: ['companies'],
-    queryFn: async () => (await api.get('/companies')).data,
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editName, setEditName] = useState('');
+  const [notification, setNotification] = useState({
+    open: false,
+    message: '',
+    type: 'success' as AlertColor,
   });
 
-  const { mutate: removeCompany, isPending } = useMutation({
-    mutationFn: async (id: string) => api.delete(`/companies/${id}`),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['companies'] }),
-  });
+  const { data: companies, isLoading } = useCompanies();
+  const { mutate: deleteCompany, isPending: isDeleting } = useDeleteCompany();
+  const { mutate: updateCompany, isPending: isUpdating } = useUpdateCompany();
+  const { data: npsData, isLoading: npsIsLoading, error } = useNpsReports();
 
-  const {
-    data: npsData,
-    isLoading: npsIsLoading,
-    error,
-  } = useQuery<NpsRow[]>({
-    queryKey: ['reports', 'nps'],
-    queryFn: async () => {
-      const res = await api.get('/reports/nps');
-      return res.data;
+  const handleEdit = (company: Company) => {
+    setEditingId(company.id);
+    setEditName(company.name);
+  };
+
+  const handleSave = (id: string, originalName: string) => {
+    if (editName.trim() === originalName) {
+      setNotification({ open: true, message: 'Nenhuma alteração foi feita', type: 'warning' });
+      setEditingId(null);
+      return;
+    }
+
+    updateCompany(
+      { id, data: { name: editName.trim() } },
+      {
+        onSuccess: () => {
+          setNotification({
+            open: true,
+            message: 'Empresa atualizada com sucesso!',
+            type: 'success',
+          });
+          setEditingId(null);
+        },
+        onError: () => {
+          setNotification({ open: true, message: 'Erro ao atualizar empresa', type: 'error' });
+        },
+      }
+    );
+  };
+
+  const handleDelete = (id: string) => {
+    deleteCompany(id, {
+      onSuccess: () => {
+        setNotification({ open: true, message: 'Empresa excluída com sucesso!', type: 'success' });
+      },
+      onError: () => {
+        setNotification({ open: true, message: 'Erro ao excluir empresa', type: 'error' });
+      },
+    });
+  };
+
+  const handleCancel = () => {
+    setEditingId(null);
+    setEditName('');
+  };
+
+  const companiesColumns: Column<Company>[] = [
+    {
+      key: 'name',
+      header: 'Empresa',
+      width: '40%',
+      render: (name: string, row: Company) =>
+        editingId === row.id ? (
+          <TextField
+            size="small"
+            value={editName}
+            onChange={e => setEditName(e.target.value)}
+            disabled={isUpdating}
+          />
+        ) : (
+          <Typography>{name}</Typography>
+        ),
     },
-  });
+    {
+      key: 'id',
+      header: 'Respostas',
+      width: '30%',
+      render: (id: string) => (
+        <Button
+          variant="outlined"
+          size="small"
+          onClick={() => router.push(`/companies/${id}/responses` as any)}
+          startIcon={<Visibility />}
+        >
+          Ver Avaliações
+        </Button>
+      ),
+    },
+    {
+      key: 'id',
+      header: 'Ações',
+      width: '30%',
+      render: (id: string, row: Company) => (
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          {editingId === id ? (
+            <>
+              <Button
+                variant="contained"
+                color="secondary"
+                size="small"
+                onClick={() => handleSave(id, row.name)}
+                disabled={isUpdating}
+                startIcon={<Save />}
+              >
+                Salvar
+              </Button>
+              <Button
+                variant="contained"
+                color="error"
+                size="small"
+                onClick={handleCancel}
+                startIcon={<Cancel />}
+              >
+                Cancelar
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button
+                variant="contained"
+                size="small"
+                onClick={() => handleEdit(row)}
+                disabled={isDeleting}
+                startIcon={<Edit />}
+              >
+                Editar
+              </Button>
+              <Button
+                variant="contained"
+                color="error"
+                size="small"
+                disabled={isDeleting || editingId !== null}
+                onClick={() => handleDelete(id)}
+                startIcon={<Delete />}
+              >
+                Excluir
+              </Button>
+            </>
+          )}
+        </Box>
+      ),
+    },
+  ];
+
+  const npsColumns: Column<NpsRow>[] = [
+    { key: 'name', header: 'Empresa' },
+    { key: 'nps', header: 'NPS', render: (v: number | null) => <NpsBadge nps={v} /> },
+    { key: 'promoters', header: 'Promotores' },
+    { key: 'neutrals', header: 'Neutros' },
+    { key: 'detractors', header: 'Detratores' },
+    { key: 'total', header: 'Total' },
+  ];
 
   return (
-    <Box display="grid" gap={2}>
-      <Typography variant="h4" fontWeight={700}>
-        Empresas
-      </Typography>
+    <Box display="grid" gap={3}>
+      <Box>
+        <Typography
+          variant="h2"
+          fontWeight={700}
+          sx={{
+            fontSize: { xs: '1.75rem', sm: '3rem' },
+            px: { xs: 2, sm: 0 },
+          }}
+        >
+          Gerenciamento de Empresas
+        </Typography>
+        <Typography variant="body1" color="text.secondary" sx={{ mt: 1, px: { xs: 2, sm: 0 } }}>
+          Cadastre e gerencie empresas para coleta de avaliações NPS. Visualize métricas de
+          satisfação e acompanhe o desempenho de cada organização.
+        </Typography>
+      </Box>
 
       <Card>
         <CardContent>
-          <CompanyForm onCreated={() => qc.invalidateQueries({ queryKey: ['companies'] })} />
+          <Typography variant="h6" gutterBottom>
+            Cadastrar Nova Empresa
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            Adicione uma nova empresa para começar a coletar avaliações NPS
+          </Typography>
+          <CompanyForm />
         </CardContent>
       </Card>
 
       <Card>
         <CardContent>
+          <Typography variant="h6" gutterBottom>
+            Empresas Cadastradas
+          </Typography>
           <DataTable
-            loading={companiesIsLoading}
-            columns={[
-              {
-                key: 'name',
-                header: 'Empresa',
-                render: (name: string, row: Company) => (
-                  <Button
-                    onClick={() => router.push(`/companies/${row.id}`)}
-                    color="primary"
-                    variant="text"
-                    sx={{ textTransform: 'none', cursor: 'pointer' }}
-                  >
-                    {name}
-                  </Button>
-                ),
-              },
-              {
-                key: 'id',
-                header: 'Ações',
-                render: (id: string) => (
-                  <Button color="error" disabled={isPending} onClick={() => removeCompany(id)}>
-                    Excluir
-                  </Button>
-                ),
-              },
-            ]}
-            rows={companiesData ?? []}
+            loading={isLoading}
+            columns={companiesColumns}
+            rows={companies ?? []}
             getRowId={r => r.id}
+            emptyMessage="Nenhuma empresa cadastrada ainda. Cadastre a primeira empresa acima."
           />
         </CardContent>
       </Card>
 
-      <Typography variant="h4" fontWeight={700}>
-        NPS por Empresa
-      </Typography>
-
       <Card>
         <CardContent>
+          <Typography variant="h6" gutterBottom>
+            Relatório NPS por Empresa
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            Acompanhe as métricas de satisfação de cada empresa
+          </Typography>
           <DataTable
             loading={npsIsLoading}
             error={!!error}
-            columns={[
-              { key: 'name', header: 'Empresa' },
-              { key: 'nps', header: 'NPS', render: (v: number | null) => <NpsBadge nps={v} /> },
-              { key: 'promoters', header: 'Promotores' },
-              { key: 'neutrals', header: 'Neutros' },
-              { key: 'detractors', header: 'Detratores' },
-              { key: 'total', header: 'Total' },
-            ]}
+            columns={npsColumns}
             rows={npsData ?? []}
-            emptyMessage="Sem dados ainda. Cadastre respostas nas empresas."
+            emptyMessage="Sem dados de NPS disponíveis. As métricas aparecerão após as primeiras avaliações."
           />
         </CardContent>
       </Card>
+
+      <Notification
+        open={notification.open}
+        message={notification.message}
+        type={notification.type}
+        onClose={() => setNotification(prev => ({ ...prev, open: false }))}
+      />
     </Box>
   );
 }
