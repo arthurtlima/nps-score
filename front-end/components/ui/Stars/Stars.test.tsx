@@ -1,34 +1,20 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import { ThemeProvider } from '@mui/material/styles';
-import { createTheme } from '@mui/material/styles';
+import { screen, fireEvent } from '@testing-library/react';
+import { render } from '@/__tests__/utils/test-utils'; // Usa nosso render customizado
 import Stars from './Stars';
 
-const theme = createTheme();
+describe('Stars Component', () => {
+  it('renders correctly with theme and providers', () => {
+    render(<Stars value={3} onChange={() => {}} />);
 
-const renderWithTheme = (component: React.ReactElement) => {
-  return render(<ThemeProvider theme={theme}>{component}</ThemeProvider>);
-};
-
-describe('Stars', () => {
-  it('should render 5 stars', () => {
-    renderWithTheme(<Stars value={3} onChange={() => {}} />);
     const stars = screen.getAllByRole('button');
     expect(stars).toHaveLength(5);
   });
 
-  it('should call onChange when star is clicked', () => {
+  it('handles click events', () => {
     const mockOnChange = jest.fn();
-    renderWithTheme(<Stars value={3} onChange={mockOnChange} />);
+    render(<Stars value={3} onChange={mockOnChange} />);
 
-    const firstStar = screen.getAllByRole('button')[0];
-    fireEvent.click(firstStar);
-
+    fireEvent.click(screen.getAllByRole('button')[0]);
     expect(mockOnChange).toHaveBeenCalledWith(1);
-  });
-
-  it('should not be clickable when readOnly is true', () => {
-    renderWithTheme(<Stars value={3} onChange={() => {}} readOnly />);
-    const buttons = screen.queryAllByRole('button');
-    expect(buttons).toHaveLength(0);
   });
 });

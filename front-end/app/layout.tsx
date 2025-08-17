@@ -24,6 +24,7 @@ export const metadata: Metadata = {
     siteName: 'Sistema NPS',
   },
 };
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt-BR">
