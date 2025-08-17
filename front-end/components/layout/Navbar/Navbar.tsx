@@ -17,7 +17,7 @@ import {
 } from '@mui/material';
 import { Menu as MenuIcon, AccountCircle } from '@mui/icons-material';
 import { useRouter, usePathname } from 'next/navigation';
-import LoginForm from './LoginForm';
+import LoginForm from '@/components/LoginForm';
 
 export default function Navbar() {
   const [drawerOpen, setDrawerOpen] = useState(false);
