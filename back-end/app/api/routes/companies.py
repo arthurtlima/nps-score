@@ -43,4 +43,4 @@ def delete_company(company_id: str, db: Session = Depends(get_db)):
     
     db.delete(db_company)
     db.commit()
-    return {"message": "Company deleted"}
+    return {"message": "Company deleted successfully"}

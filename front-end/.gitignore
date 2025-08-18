@@ -10,11 +10,11 @@ build/
 dist/
 
 # Testes
-coverage/                 # ✅ Relatórios de cobertura
-*.lcov                   # ✅ Arquivos de cobertura
-.nyc_output/             # ✅ NYC coverage
-junit.xml                # ✅ Relatórios XML
-test-results/            # ✅ Resultados de testes
+coverage/
+*.lcov
+.nyc_output/
+junit.xml
+test-results/
 
 # Logs
 logs/
@@ -24,9 +24,9 @@ yarn-debug.log*
 yarn-error.log*
 
 # Runtime
-.env.local
+.env.local          # ✅ Não commitar
 .env.development.local
-.env.test.local          # ✅ Variáveis de teste
+.env.test.local
 .env.production.local
 
 # IDE

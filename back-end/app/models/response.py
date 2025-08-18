@@ -6,7 +6,11 @@ class Response(Base):
     __tablename__ = "responses"
     
     id = Column(String, primary_key=True, index=True)
-    company_id = Column(String, ForeignKey("companies.id"), nullable=False)
+    company_id = Column(
+        String, 
+        ForeignKey("companies.id", ondelete="CASCADE"),
+        nullable=False
+    )
     rating = Column(Integer, nullable=False)
     comment = Column(Text, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())

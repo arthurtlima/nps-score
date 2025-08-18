@@ -1,11 +1,19 @@
+import sys
+import os
 from logging.config import fileConfig
 from sqlalchemy import engine_from_config, pool
 from alembic import context
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+
 from app.core.database import Base
-from app.models import company, response  # Import todos os models
+from app.models.company import Company
+from app.models.response import Response
 
 config = context.config
-fileConfig(config.config_file_name)
+if config.config_file_name is not None:
+    fileConfig(config.config_file_name)
+
 target_metadata = Base.metadata
 
 def run_migrations_online():
@@ -23,4 +31,7 @@ def run_migrations_online():
         with context.begin_transaction():
             context.run_migrations()
 
-run_migrations_online()
+if context.is_offline_mode():
+    run_migrations_online()
+else:
+    run_migrations_online()
