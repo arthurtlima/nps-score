@@ -1,9 +1,9 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { responsesService } from '@/services/responses.service';
 import { CreateResponseData } from '@/types/response';
+import queryClient from '@/lib/queryClient';
 
 export const useCreateResponse = (companyId: string) => {
-  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (data: CreateResponseData) => responsesService.create(companyId, data),
