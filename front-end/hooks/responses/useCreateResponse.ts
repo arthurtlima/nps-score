@@ -10,6 +10,7 @@ export const useCreateResponse = (companyId: string) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['responses', companyId] });
       queryClient.invalidateQueries({ queryKey: ['reports', 'nps'] });
+      queryClient.refetchQueries({ queryKey: ['responses', companyId] });
     },
   });
 };

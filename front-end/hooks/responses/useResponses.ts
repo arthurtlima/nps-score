@@ -6,5 +6,8 @@ export const useResponses = (companyId: string) => {
     queryKey: ['responses', companyId],
     queryFn: () => responsesService.getByCompany(companyId),
     enabled: !!companyId,
+    staleTime: 0,
+    refetchOnMount: true, 
+    refetchOnWindowFocus: false,
   });
 };

@@ -1,18 +1,18 @@
 import { QueryClient } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 
-export const __MAX_RETRIES__ = 3;
-export const __DEFAULT_CACHE_TIME__ = 0;
-export const __HTTP_STATUS_CODES_NO_RETRY__ = [400, 401, 403, 404, 422];
+export const MAX_RETRIES = 3;
+export const DEFAULT_STALE_TIME = 0;
+export const DEFAULT_CACHE_TIME = 5 * 60 * 1000;
+export const HTTP_STATUS_CODES_NO_RETRY = [400, 401, 403, 404, 422];
 
 function retry(failureCount: number, error: unknown) {
-  if (failureCount > __MAX_RETRIES__) {
+  if (failureCount > MAX_RETRIES) {
     return false;
   }
 
   if (isAxiosError(error)) {
-    const isStatusNotRetry = __HTTP_STATUS_CODES_NO_RETRY__.includes(error.response?.status ?? 0);
-
+    const isStatusNotRetry = HTTP_STATUS_CODES_NO_RETRY.includes(error.response?.status ?? 0);
     if (isStatusNotRetry) {
       return false;
     }
@@ -25,9 +25,10 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
-      refetchOnMount: true,
+      refetchOnMount: false, 
       retry,
-      gcTime: __DEFAULT_CACHE_TIME__,
+      staleTime: DEFAULT_STALE_TIME,
+      gcTime: DEFAULT_CACHE_TIME,
     },
   },
 });

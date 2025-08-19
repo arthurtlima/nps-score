@@ -5,5 +5,7 @@ export const useCompanies = () => {
   return useQuery({
     queryKey: ['companies'],
     queryFn: companiesService.getAll,
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
   });
 };
