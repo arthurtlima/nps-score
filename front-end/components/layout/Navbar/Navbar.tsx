@@ -103,15 +103,17 @@ export default function Navbar() {
                 ))}
               </Box>
             )}
-
-            <IconButton
-              size="large"
-              color="inherit"
-              onClick={() => setLoginOpen(true)}
-              sx={{ marginLeft: 'auto' }}
-            >
-              <AccountCircle />
-            </IconButton>
+            {/*
+              TODO: Enable when auth is ready
+              <IconButton
+                size="large"
+                color="inherit"
+                onClick={() => setLoginOpen(true)}
+                sx={{ marginLeft: 'auto' }}
+              >
+                <AccountCircle />
+              </IconButton>
+            */}
           </Toolbar>
         </Container>
       </AppBar>

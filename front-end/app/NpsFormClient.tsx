@@ -17,6 +17,7 @@ import {
 import Notification from '@/components/ui/Notification/Notification';
 import Stars from '@/components/ui/Stars/Stars';
 import api from '@/lib/api';
+import queryClient from '@/lib/queryClient';
 
 const schema = z.object({
   companyId: z.string().min(1, 'Selecione uma empresa'),
@@ -64,6 +65,9 @@ export default function DashboardPage() {
     onSuccess: () => {
       reset();
       setNotification({ open: true, message: 'Avaliação enviada com sucesso!', type: 'success' });
+
+      queryClient.invalidateQueries({ queryKey: ['reports', 'nps'] });
+      queryClient.refetchQueries({ queryKey: ['reports', 'nps'] });
     },
   });
 
