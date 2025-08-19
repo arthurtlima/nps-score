@@ -3,7 +3,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { TextField, Button, Stack } from '@mui/material';
-import Stars from './Stars';
+import Stars from '@/components/ui/Stars/Stars';
 import api from '@/lib/api';
 
 const schema = z.object({

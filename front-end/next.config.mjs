@@ -1,5 +1,9 @@
+/** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
-  experimental: { typedRoutes: true },
+  output: 'standalone',
+  experimental: {
+    outputFileTracingRoot: undefined,
+  },
 };
+
 export default nextConfig;
