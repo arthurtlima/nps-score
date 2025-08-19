@@ -108,6 +108,9 @@ source venv/bin/activate  # Linux/Mac
 # ou
 venv\Scripts\activate     # Windows
 
+# Atualizar pip
+pip install --upgrade pip setuptools wheel
+
 # Instalar dependências
 pip install -e ".[dev]"
 
