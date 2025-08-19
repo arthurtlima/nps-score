@@ -1,25 +1,26 @@
-version: '3.8'
-
 services:
+
   postgres:
-    image: postgres:15-alpine
-    container_name: nps_postgres
-    environment:
-      POSTGRES_DB: nps_db
-      POSTGRES_USER: nps_user
-      POSTGRES_PASSWORD: nps_password
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U nps_user -d nps_db"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      image: postgres:15-alpine
+      container_name: nps_postgres
+      environment:
+        POSTGRES_DB: nps_db
+        POSTGRES_USER: nps_user
+        POSTGRES_PASSWORD: nps_password
+      ports:
+        - "5432:5432"
+      volumes:
+        - postgres_data:/var/lib/postgresql/data
+      healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U nps_user -d nps_db"]
+        interval: 5s
+        timeout: 3s
+        retries: 3
 
   backend:
-    build: ./backend
+    build: 
+      context: ./back-end
+      dockerfile: Dockerfile
     container_name: nps_backend
     environment:
       DATABASE_URL: postgresql://nps_user:nps_password@postgres:5432/nps_db
@@ -28,11 +29,10 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./backend:/app
+      - ./back-end:/app
     depends_on:
       postgres:
         condition: service_healthy
-    # Migrations automáticas no Docker
     command: sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
 
   frontend:
