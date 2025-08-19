@@ -10,7 +10,7 @@ app = FastAPI(
     title=settings.APP_NAME,
     description="API para sistema de NPS",
     version=settings.VERSION,
-    debug=settings.DEBUG
+    debug=settings.DEBUG,
 )
 
 app.add_middleware(
@@ -25,13 +25,15 @@ app.include_router(companies.router, prefix="/api/companies", tags=["companies"]
 app.include_router(responses.router, prefix="/api", tags=["responses"])
 app.include_router(reports.router, prefix="/api/reports", tags=["reports"])
 
+
 @app.get("/")
 def read_root():
     return {
         "message": f"{settings.APP_NAME} is running",
         "version": settings.VERSION,
-        "debug": settings.DEBUG
+        "debug": settings.DEBUG,
     }
+
 
 @app.get("/health")
 def health_check():

@@ -115,6 +115,14 @@ pip install -e ".[dev]"
 cp .env.example .env
 # Editar .env com suas configurações
 
+# **IMPORTANTE: Banco de dados**
+# Para execução local, você precisa ter o PostgreSQL rodando
+# Opção 1: Usar apenas o banco via Docker
+docker-compose up postgres -d
+
+# Opção 2: Instalar PostgreSQL localmente e criar o banco
+# createdb -U nps_user nps_db
+
 # Executar migrações
 alembic upgrade head
 ```
