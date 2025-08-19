@@ -1,7 +1,18 @@
 {
-  "extends": ["next/core-web-vitals", "prettier"],
+  "extends": [
+    "next/core-web-vitals",
+    "prettier"
+  ],
   "rules": {
     "@next/next/no-img-element": "off",
     "no-unused-vars": "warn"
-  }
+  },
+  "ignorePatterns": [
+    "jest.config.js",
+    "jest.setup.js",
+    "next.config.mjs",
+    "**/*.test.tsx",
+    "**/*.test.ts",
+    "**/__tests__/**"
+  ]
 }
