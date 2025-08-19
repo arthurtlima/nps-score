@@ -1,0 +1,6 @@
+{
+    "python.defaultInterpreterPath": "./back-end/venv/bin/python",
+    "python.analysis.extraPaths": ["./back-end"],
+    "python.terminal.activateEnvironment": true,
+    "python.terminal.activateEnvInCurrentTerminal": true
+}

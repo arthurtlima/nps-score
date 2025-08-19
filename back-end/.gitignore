@@ -20,3 +20,5 @@ coverage.xml
 *.cover
 .hypothesis/
 .DS_Store
+test.db
+*.egg-info/

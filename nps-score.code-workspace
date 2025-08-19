@@ -1,0 +1,23 @@
+{
+    "folders": [
+        {
+            "name": "Backend",
+            "path": "./back-end"
+        },
+        {
+            "name": "Frontend", 
+            "path": "./front-end"
+        }
+    ],
+    "settings": {
+        "python.defaultInterpreterPath": "./back-end/venv/bin/python",
+        "python.terminal.activateEnvironment": true,
+        "python.analysis.extraPaths": ["./back-end"]
+    },
+    "extensions": {
+        "recommendations": [
+            "ms-python.python",
+            "ms-python.pylance"
+        ]
+    }
+}

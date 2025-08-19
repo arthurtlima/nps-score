@@ -2,6 +2,9 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.api.routes import companies, responses, reports
+from app.core.logging import setup_logging
+
+setup_logging()
 
 app = FastAPI(
     title=settings.APP_NAME,
